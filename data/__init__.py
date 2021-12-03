@@ -5,7 +5,7 @@ from .dataset import StockNetDataset
 
 def load_data(config):
     train_dataset = StockNetDataset(config, date_range=['2014-01-01', '2015-7-31'])
-    valid_dataset = StockNetDataset(config, vocabs=train_dataset.vocabs, date_range=['2015-08-01', '2016-01-01'])
+    valid_dataset = StockNetDataset(config, companies=train_dataset.companies, vocabs=train_dataset.vocabs, date_range=['2015-08-01', '2016-01-01'])
 
     train_data = DataLoader(
         train_dataset,

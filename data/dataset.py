@@ -7,7 +7,7 @@ from torch.utils.data import Dataset
 from allennlp.data.vocabulary import Vocabulary
 
 class StockNetDataset(Dataset):
-    def __init__(self, config, vocabs=None, date_range=['2014-07-01','2016-01-01']):
+    def __init__(self, config, companies=None, vocabs=None, date_range=['2014-07-01','2016-01-01']):
         super().__init__()
 
         # Load config
@@ -103,12 +103,16 @@ class StockNetDataset(Dataset):
         self.dates_days = [day_of_year(date) for date in self.dates]
         self.tweet_dates_days = [day_of_year(date) for date in self.tweet_dates]
 
-        self.companies = list(self.shifts[self.dates[0]].keys())
+        if companies is None:
+            self.companies = list(self.shifts[self.dates[0]].keys())
+        else:
+            self.companies = companies
 
         if vocabs is not None:
             self.vocabs = vocabs
 
-        print (self.shift_counts)
+        print ('Num stocks:', len(self.companies))
+        print ('Shift dist:', self.shift_counts)
 
     def __getitem__(self, idx):
 
@@ -137,7 +141,7 @@ class StockNetDataset(Dataset):
         else:
             tweet_hist_len = closest_day_idx+1
 
-        tweet_hist = np.zeros((self.tweet_encode_lens, len(self.companies), self.max_num_tweet, self.max_tweet_len), dtype=np.float32)
+        tweet_hist = np.zeros((self.tweet_encode_lens, len(self.companies), self.max_num_tweet, self.max_tweet_len), dtype=np.long)
         tweet_lens = np.zeros((self.tweet_encode_lens, len(self.companies), self.max_num_tweet), dtype=np.long)
 
         for t, _date in enumerate(self.tweet_dates[closest_day_idx-tweet_hist_len+1:closest_day_idx+1]):
@@ -150,8 +154,11 @@ class StockNetDataset(Dataset):
                     tweet_lens[t,c,i] = len(tweet)
 
         # Retrieve price shifts
-        shift = self.shifts[date]
-        
+        shift_stocks = self.shifts[date]
+        shift = np.zeros(len(self.companies), dtype=np.float32)
+        for c, company in enumerate(self.companies):
+            shift[c] = shift_stocks[company]
+
         return price_hist, price_hist_len, tweet_hist, tweet_lens, shift
 
         # import pdb; pdb.set_trace()
@@ -182,7 +189,7 @@ if __name__ == '__main__':
     with open('config.yaml', 'r') as f:
         config = yaml.safe_load(f)
 
-    dataset = StockNetDataset(config, date_range=['2014-07-01','2016-01-01'])
+    dataset = StockNetDataset(config, date_range=['2014-01-01', '2015-7-31'])
     for i in tqdm.tqdm(range(len(dataset))):
         dataset[i]
         # dataset[i]

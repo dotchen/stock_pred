@@ -5,7 +5,10 @@ price_encode_lens: 10
 tweet_encode_lens: 5
 glove_path: glove/glove.twitter.27B.100d.txt
 lr: 3e-4
-batch_size: 64
+batch_size: 4
 weight_decay: 1e-4
 model: rnn
 optim: adam
+dropout: 0.5
+tweet_hidden_dim: 64
+num_tweet_rnn_layers: 2
