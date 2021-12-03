@@ -1,0 +1,11 @@
+data_dir: /raid0/dian/stocknet_dataset
+# price_shifts_bins: [-4,-2,-1,-0.5,0.5,1,2,4]
+price_shifts_bins: [-0.5,0.5]
+price_encode_lens: 10
+tweet_encode_lens: 5
+glove_path: glove/glove.twitter.27B.100d.txt
+lr: 3e-4
+batch_size: 64
+weight_decay: 1e-4
+model: rnn
+optim: adam
