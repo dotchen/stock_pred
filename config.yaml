@@ -11,5 +11,7 @@ model: rnn
 optim: adam
 dropout: 0.5
 tweet_hidden_dim: 64
+price_hidden_dim: 16
 num_tweet_rnn_layers: 2
+num_price_rnn_layers: 1
 max_num_tweet: 8

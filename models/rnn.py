@@ -25,13 +25,24 @@ class RNNStockModel(nn.Module):
             batch_first=True, 
         )
 
-        # self.price_encoder = nn.
+        # TODO: make this argument
+        self.price_encoder = nn.GRU(
+            3, config['price_hidden_dim'],
+            num_layers=config['num_price_rnn_layers'],
+            dropout=config['dropout'],
+            batch_first=True
+        )
 
         self.tweet_hidden_dim = config['tweet_hidden_dim']
+        self.price_hidden_dim = config['price_hidden_dim']
+
+
 
     def forward(self, price_hist, price_lens, tweet_hist, tweet_lens):
 
         B, T_tw, C, N_tw, L_tw = tweet_hist.size()
+        _,  _, T_pr, _ = price_hist.size()
+
         device = tweet_hist.device
 
         # mask_instruct = torch.arange(L, device=init_state.device)[None, :] < instruct_lengths[:, None]
@@ -56,16 +67,19 @@ class RNNStockModel(nn.Module):
 
         # Encode prices
         nonzero_price_indices = (price_lens > 0)
-        nonzero_price_hist = price_hist[nonzero_price_indices]
-        nonzero_price_lens = price_lens[nonzero_price_indices]
-
-        import pdb; pdb.set_trace()
+        nonzero_price_hist = price_hist[nonzero_price_indices].view(-1,T_pr,3)
+        nonzero_price_lens = price_lens[nonzero_price_indices][:,None].repeat(1,85).view(-1)
 
         nonzero_price_hist, nonzero_price_lens, sorted_nonzero_price_hist_indices, _ = sort_batch_by_length(nonzero_price_hist, nonzero_price_lens)
-        nonzero_tweet_hist = pack_padded_sequence(nonzero_tweet_hist, nonzero_tweet_lens, batch_first=True)
-        nonzero_tweet_embd, _ = self.tweet_encoder(nonzero_tweet_hist)
-        nonzero_tweet_embd, _ = pad_packed_sequence(nonzero_tweet_embd, batch_first=True)
-        nonzero_tweet_embd = nonzero_tweet_embd.index_select(0, sorted_nonzero_tweet_hist_indices)
+        nonzero_price_hist = pack_padded_sequence(nonzero_price_hist, nonzero_price_lens, batch_first=True)
+        _, nonzero_price_embd = self.price_encoder(nonzero_price_hist)
 
-        tweet_embed = torch.zeros((B,T_tw,C,N_tw,nonzero_tweet_embd.size(1),self.tweet_hidden_dim*2), dtype=torch.float32, device=device)
-        tweet_embed[nonzero_tweet_indices] = nonzero_tweet_embd
+        nonzero_price_embd = nonzero_price_embd[0].index_select(0, sorted_nonzero_price_hist_indices)
+
+        price_embd = torch.zeros((B,C,self.price_hidden_dim), dtype=torch.float32, device=device)
+        price_embd[nonzero_price_indices] = nonzero_price_embd.view(-1,C,self.price_hidden_dim)
+        price_embd = price_embd.view(B,C,self.price_hidden_dim)
+
+        # Process tweets
+        import pdb; pdb.set_trace()
+        

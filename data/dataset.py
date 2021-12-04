@@ -26,9 +26,9 @@ class StockNetDataset(Dataset):
         self.prices = OrderedDict()
         self.shifts = OrderedDict()
         self.tweets = OrderedDict()
-        
+
         self.shift_counts = defaultdict(int)
-        
+
         self.vocabs = Vocabulary()
 
         self.max_tweet_len = 0
@@ -52,9 +52,9 @@ class StockNetDataset(Dataset):
                     shift_bin = np.searchsorted(self.price_shifts_bins, movement_percent*100)
 
                     self.maybe_add(date, [self.prices, self.shifts])
-                    self.prices[date][stock] = close_price
+                    self.prices[date][stock] = [close_price, low_price, high_price]
                     self.shifts[date][stock] = shift_bin
-                    
+
                     self.shift_counts[shift_bin] += 1
 
         # First pass: build vocabulary
@@ -130,11 +130,11 @@ class StockNetDataset(Dataset):
         else:
             price_hist_len = idx
 
-        price_hist = np.zeros((self.price_encode_lens, len(self.companies)), dtype=np.float32)
+        price_hist = np.zeros((len(self.companies), self.price_encode_lens, 3), dtype=np.float32)
 
         for c, company in enumerate(self.companies):
             for t, _date in enumerate(self.dates[idx-price_hist_len:idx]):
-                price_hist[t,c] = self.prices[_date][company]
+                price_hist[c,t] = self.prices[_date][company]
 
         # Retrieve tweets
         date_in_days = self.dates_days[idx]
