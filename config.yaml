@@ -12,3 +12,4 @@ optim: adam
 dropout: 0.5
 tweet_hidden_dim: 64
 num_tweet_rnn_layers: 2
+max_num_tweet: 8

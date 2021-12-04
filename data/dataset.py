@@ -2,6 +2,7 @@ import glob
 import json
 import datetime
 import numpy as np
+import random
 from collections import OrderedDict, defaultdict
 from torch.utils.data import Dataset
 from allennlp.data.vocabulary import Vocabulary
@@ -31,7 +32,6 @@ class StockNetDataset(Dataset):
         self.vocabs = Vocabulary()
 
         self.max_tweet_len = 0
-        self.max_num_tweet = 0
 
         for stock_data in glob.glob(f'{self.data_dir}/price/preprocessed/**'):
             stock = stock_data.split('/')[-1].split('.txt')[0]
@@ -70,6 +70,8 @@ class StockNetDataset(Dataset):
                     with open(tweet_data) as f:
                         lines = f.readlines()
 
+                    text_pool = set([])
+
                     for line in lines:
                         line = line.strip()
                         tweet_json = json.loads(line)
@@ -77,6 +79,12 @@ class StockNetDataset(Dataset):
                         # First pass
                         for token in tweet_json['text']:
                             self.vocabs.add_token_to_namespace(token)
+                        
+                        text = ' '.join(tweet_json['text'])
+                        if text in text_pool:
+                            continue
+                        
+                        text_pool.add(text)
 
                         # Second pass
                         if vocabs is None:
@@ -88,9 +96,7 @@ class StockNetDataset(Dataset):
                         self.tweets[date][stock].append(tweet)
 
                         self.max_tweet_len = max(self.max_tweet_len, len(tweet_json['text']))
-    
-                    self.max_num_tweet = max(self.max_num_tweet, len(lines))
-    
+
         def day_of_year(date):
             year, month, day = map(int, date.split('-'))
             gap = datetime.date(year, month, day) - start_date
@@ -148,8 +154,10 @@ class StockNetDataset(Dataset):
             for company in self.tweets[_date].keys():
                 if company not in self.companies:
                     continue
+                # import pdb; pdb.set_trace()
+                selected_tweets = self.sample_tweets(self.tweets[_date][company])
                 c = self.companies.index(company)
-                for i, tweet in enumerate(self.tweets[_date][company]):
+                for i, tweet in enumerate(selected_tweets):
                     tweet_hist[t,c,i,:len(tweet)] = tweet
                     tweet_lens[t,c,i] = len(tweet)
 
@@ -181,6 +189,12 @@ class StockNetDataset(Dataset):
         for data in datas:
             if date not in data:
                 data[date] = cls_func()
+
+    def sample_tweets(self, tweets):
+        if len(tweets) <= self.max_num_tweet:
+            return tweets
+        else:
+            return random.sample(tweets, self.max_num_tweet)
 
 if __name__ == '__main__':
     import yaml
