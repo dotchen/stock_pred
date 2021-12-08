@@ -163,7 +163,7 @@ class StockNetDataset(Dataset):
 
         # Retrieve price shifts
         shift_stocks = self.shifts[date]
-        shift = np.zeros(len(self.companies), dtype=np.float32)
+        shift = np.zeros(len(self.companies), dtype=np.long)
         for c, company in enumerate(self.companies):
             shift[c] = shift_stocks[company]
 

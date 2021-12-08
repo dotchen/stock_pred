@@ -25,8 +25,6 @@ def load_data(config):
 
 
 
-
-
 def load_embeddings(glove_path, vocab):
     """
     Create an embedding matrix for a Vocabulary.
