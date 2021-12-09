@@ -1,4 +1,5 @@
-(Failed) attempts at predicting stock price movements
+# CS388 Final Project: Dian Chen
+Stock price movement prediction with Tweets and Prices.
 
 ## Install
 First install conda and create a dedicated python environment.
