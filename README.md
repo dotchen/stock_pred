@@ -8,6 +8,6 @@ Then in that environment, install `PyTorch`, `pyyaml` and `wandb` either through
 
 ## Train Models
 Edit `config.yaml` with hyperparameter and model configs of choice and then do 
-```
-python train.py
 ```bash
+python train.py
+```
