@@ -5,7 +5,7 @@ Stock price movement prediction with Tweets and Prices.
 First install conda and create a dedicated python environment.
 `conda create -n cs388 python=3.6`,
 
-Then in that environment, install `PyTorch`, `allennlp==0.9.0`, `pyyaml` and `wandb` either through `conda` or `pip`.
+Then in that environment, install `PyTorch==1.4`, `allennlp==0.9.0`, `pyyaml` and `wandb` either through `conda` or `pip`.
 
 Also download the [dataset](https://github.com/yumoxu/stocknet-dataset/).
 
