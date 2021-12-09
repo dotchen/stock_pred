@@ -11,4 +11,4 @@ Edit `config.yaml` with hyperparameter and model configs of choice and then do
 ```bash
 python train.py
 ```
-The best one I get was `model: tweet_price_sa` with defaul parameters which gets about 38% test set accuracies.
+The best one I get was `model: tweet_price_sa` with default parameters which gets about 38% test set accuracies.
