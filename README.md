@@ -6,6 +6,8 @@ First install conda and create a dedicated python environment.
 
 Then in that environment, install `PyTorch`, `pyyaml` and `wandb` either through `conda` or `pip`.
 
+Also download the [dataset](https://github.com/yumoxu/stocknet-dataset/).
+
 ## Train Models
 Edit `config.yaml` with hyperparameter and model configs of choice and then do 
 ```bash
