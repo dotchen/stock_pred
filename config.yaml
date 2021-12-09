@@ -3,7 +3,7 @@ data_dir: /hdd/cs388/stocknet_dataset
 price_shifts_bins: [-0.5,0.5]
 price_encode_lens: 5
 tweet_encode_lens: 5
-glove_path: glove/glove.twitter.27B.25d.txt
+glove_path: glove/glove.twitter.27B.50d.txt
 lr: 1e-3
 batch_size: 1
 weight_decay: 1e-2
