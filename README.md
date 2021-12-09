@@ -1,4 +1,4 @@
-# CS388 Final Project: Dian Chen
+# UT Austin CS388 (Fall 2021) Final Project: Dian Chen
 Stock price movement prediction with Tweets and Prices.
 
 ## Install
