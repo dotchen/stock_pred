@@ -101,7 +101,6 @@ class TweetPriceModel(BasicModel):
         # mean_tweet_embd = tweet_embd.mean(dim=1)                                     # Average over time
         # mean_tweet_embd = mean_tweet_embd.mean(dim=2)                                # Average over tweets
 
-        import pdb; pdb.set_trace()
         # Process tweets
         values = tweet_embd.view(-1,N_tw,self.tweet_hidden_dim)
         queries = self.tweet_query[None].expand(values.size(0), 1, self.tweet_hidden_dim)
