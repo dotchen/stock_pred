@@ -9,6 +9,8 @@ Then in that environment, install `PyTorch==1.4`, `allennlp==0.9.0`, `pyyaml` an
 
 Also download the [dataset](https://github.com/yumoxu/stocknet-dataset/).
 
+Also download the [GloVE embedding](https://nlp.stanford.edu/projects/glove/) pretrained on twitter.
+
 ## Train Models
 Edit `config.yaml` with hyperparameter and model configs of choice and then do 
 ```bash
